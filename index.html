@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paperie — สมุดโน้ตดิจิทัล</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink:    #F9A8C9;
+    --peach:   #FFD6B8;
+    --mint:    #B5E8D5;
+    --lavender:#CDB8F0;
+    --yellow:  #FFF0A0;
+    --cream:   #FFFAF4;
+    --brown:   #6B4C3B;
+    --dark:    #3D2B1F;
+    --white:   #FFFFFF;
+    --shadow:  0 4px 24px rgba(107,76,59,.10);
+    --radius:  20px;
+  }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────── */
+  header {
+    background: var(--white);
+    border-bottom: 2px dashed var(--pink);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: 'Mitr', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--brown);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo span { font-size: 1.8rem; }
+  .cart-btn {
+    background: var(--pink);
+    border: none; cursor: pointer;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--brown);
+    display: flex; align-items: center; gap: 6px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .cart-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(249,168,201,.5); }
+  .cart-count {
+    background: var(--brown); color: #fff;
+    border-radius: 50%; width: 20px; height: 20px;
+    font-size: .75rem; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── HERO ───────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #FFE4F0 0%, #FFF0D6 50%, #E8F8F0 100%);
+    text-align: center;
+    padding: 64px 24px 48px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '✿ ✦ ✿ ✦ ✿ ✦ ✿';
+    position: absolute; top: 16px; left: 0; right: 0;
+    color: var(--pink); font-size: 1.1rem; letter-spacing: 8px; opacity: .6;
+  }
+  .hero::after {
+    content: '✿ ✦ ✿ ✦ ✿ ✦ ✿';
+    position: absolute; bottom: 16px; left: 0; right: 0;
+    color: var(--mint); font-size: 1.1rem; letter-spacing: 8px; opacity: .6;
+  }
+  .hero h1 {
+    font-family: 'Mitr', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 600; color: var(--brown);
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 1.1rem; color: #8B6555;
+    max-width: 480px; margin: 0 auto 24px;
+    line-height: 1.7;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--white);
+    border: 2px solid var(--pink);
+    border-radius: 50px;
+    padding: 6px 20px;
+    font-size: .9rem; color: var(--brown);
+    font-weight: 600;
+  }
+
+  /* ─── PRODUCTS ───────────────────────── */
+  .section-title {
+    text-align: center;
+    font-family: 'Mitr', sans-serif;
+    font-size: 1.5rem; color: var(--brown);
+    margin: 48px 0 28px;
+  }
+  .section-title::after {
+    content: ''; display: block;
+    width: 60px; height: 3px;
+    background: var(--pink);
+    border-radius: 2px;
+    margin: 8px auto 0;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(107,76,59,.15); }
+
+  .card-cover {
+    height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+    position: relative;
+  }
+  .badge-new {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--pink); color: var(--brown);
+    font-size: .75rem; font-weight: 700;
+    padding: 4px 10px; border-radius: 50px;
+  }
+
+  .card-body { padding: 20px; }
+  .card-title { font-family: 'Mitr', sans-serif; font-size: 1.1rem; color: var(--brown); margin-bottom: 6px; }
+  .card-desc { font-size: .9rem; color: #8B6555; line-height: 1.6; margin-bottom: 14px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .tag {
+    background: var(--yellow); color: var(--brown);
+    font-size: .75rem; font-weight: 600;
+    padding: 3px 10px; border-radius: 50px;
+  }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .price { font-family: 'Mitr', sans-serif; font-size: 1.3rem; color: var(--brown); font-weight: 600; }
+  .price small { font-size: .8rem; font-weight: 400; color: #8B6555; }
+
+  .add-btn {
+    background: linear-gradient(135deg, var(--pink), var(--peach));
+    border: none; cursor: pointer;
+    border-radius: 50px;
+    padding: 9px 18px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: .9rem; font-weight: 700;
+    color: var(--brown);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .add-btn:hover { transform: scale(1.06); box-shadow: 0 4px 14px rgba(249,168,201,.5); }
+  .add-btn.added { background: linear-gradient(135deg, var(--mint), #9FE0C7); }
+
+  /* ─── OVERLAY / MODAL ────────────────── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(61,43,31,.45);
+    z-index: 200; backdrop-filter: blur(3px);
+    align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 28px;
+    width: 90%; max-width: 480px;
+    max-height: 90vh; overflow-y: auto;
+    padding: 32px;
+    position: relative;
+    animation: pop .25s ease;
+  }
+  @keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--cream); border: none; cursor: pointer;
+    border-radius: 50%; width: 36px; height: 36px;
+    font-size: 1.2rem; color: var(--brown);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal h2 { font-family: 'Mitr', sans-serif; color: var(--brown); margin-bottom: 20px; }
+
+  /* Cart items */
+  .cart-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0; border-bottom: 1px dashed #F0E0D8;
+  }
+  .cart-item-icon { font-size: 2rem; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 600; color: var(--brown); font-size: .95rem; }
+  .cart-item-price { color: #8B6555; font-size: .85rem; }
+  .remove-item { background: none; border: none; cursor: pointer; color: #D0A0A0; font-size: 1.1rem; }
+
+  .cart-total {
+    display: flex; justify-content: space-between;
+    padding: 16px 0 20px;
+    font-family: 'Mitr', sans-serif;
+    font-size: 1.15rem; color: var(--brown);
+  }
+
+  /* Steps */
+  .steps { display: flex; gap: 8px; margin-bottom: 24px; }
+  .step {
+    flex: 1; text-align: center;
+    padding: 8px 4px;
+    border-radius: 50px;
+    font-size: .8rem; font-weight: 600;
+    color: #B0947E;
+    border: 2px solid #F0E0D8;
+  }
+  .step.active { background: var(--pink); color: var(--brown); border-color: var(--pink); }
+  .step.done { background: var(--mint); color: var(--brown); border-color: var(--mint); }
+
+  /* Form */
+  .form-label { font-size: .9rem; font-weight: 600; color: var(--brown); display: block; margin-bottom: 6px; }
+  .form-input {
+    width: 100%; padding: 12px 16px;
+    border: 2px solid #F0E0D8;
+    border-radius: 12px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem; color: var(--dark);
+    background: var(--cream);
+    outline: none;
+    transition: border-color .15s;
+    margin-bottom: 16px;
+  }
+  .form-input:focus { border-color: var(--pink); }
+
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    border: none; cursor: pointer;
+    border-radius: 50px;
+    font-family: 'Mitr', sans-serif;
+    font-size: 1.05rem; font-weight: 500;
+    color: var(--brown);
+    transition: transform .15s, box-shadow .15s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(205,184,240,.5); }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* QR section */
+  .qr-box {
+    background: linear-gradient(135deg, #FFF0F8, #F0F0FF);
+    border: 2px dashed var(--lavender);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .qr-img {
+    width: 180px; height: 180px;
+    background: var(--white);
+    border: 3px solid var(--lavender);
+    border-radius: 12px;
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Fake QR pattern */
+  .qr-img::after {
+    content: '';
+    position: absolute; inset: 10px;
+    background:
+      repeating-linear-gradient(0deg, #6B4C3B 0, #6B4C3B 3px, transparent 3px, transparent 9px),
+      repeating-linear-gradient(90deg, #6B4C3B 0, #6B4C3B 3px, transparent 3px, transparent 9px);
+    opacity: .18;
+    border-radius: 4px;
+  }
+  .qr-emoji { position: relative; z-index: 1; font-size: 3rem; }
+  .qr-account { font-weight: 700; color: var(--brown); font-size: 1.05rem; margin-bottom: 4px; }
+  .qr-name { color: #8B6555; font-size: .9rem; }
+  .amount-badge {
+    display: inline-block;
+    background: var(--pink); color: var(--brown);
+    font-family: 'Mitr', sans-serif;
+    font-size: 1.2rem; font-weight: 600;
+    padding: 6px 20px; border-radius: 50px;
+    margin: 10px 0;
+  }
+  .timer { font-size: .85rem; color: #8B6555; margin-top: 8px; }
+  .timer span { color: #D06060; font-weight: 700; }
+
+  /* Slip upload */
+  .upload-area {
+    border: 2px dashed var(--pink);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background .15s;
+  }
+  .upload-area:hover { background: #FFF0F5; }
+  .upload-area input { display: none; }
+  .upload-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .upload-text { font-size: .9rem; color: #8B6555; }
+  .upload-text strong { color: var(--brown); }
+  .slip-preview { max-width: 100%; border-radius: 8px; margin-top: 8px; }
+
+  /* Success */
+  .success-box { text-align: center; padding: 16px 0; }
+  .success-icon { font-size: 5rem; margin-bottom: 16px; display: block; animation: bounce .6s ease; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .success-box h3 { font-family: 'Mitr', sans-serif; font-size: 1.4rem; color: var(--brown); margin-bottom: 8px; }
+  .success-box p { color: #8B6555; line-height: 1.7; font-size: .95rem; }
+  .email-highlight { color: var(--brown); font-weight: 700; }
+
+  /* Empty cart */
+  .empty-cart { text-align: center; padding: 32px 0; color: #8B6555; }
+  .empty-cart span { font-size: 4rem; display: block; margin-bottom: 12px; }
+
+  /* Footer */
+  footer {
+    background: var(--white);
+    border-top: 2px dashed var(--peach);
+    text-align: center;
+    padding: 24px;
+    color: #8B6555;
+    font-size: .9rem;
+  }
+  footer strong { color: var(--brown); }
+
+  /* Confetti dots */
+  .confetti-dot {
+    position: fixed; pointer-events: none; z-index: 999;
+    border-radius: 50%; animation: fall 1.5s ease-in forwards;
+  }
+  @keyframes fall {
+    from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+
+  @media(max-width:600px){
+    header { padding: 14px 16px; }
+    .modal { padding: 24px 20px; }
+    .products-grid { grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 16px 40px; }
+    .card-cover { height: 150px; font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo"><span>📓</span> Paperie</div>
+  <button class="cart-btn" onclick="openCart()">
+    🛒 ตะกร้า <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>สมุดโน้ตดิจิทัล<br>น่ารัก ✨ พร้อมใช้</h1>
+  <p>ดาวน์โหลดทันทีหลังชำระเงิน ส่งตรงไปยังอีเมลของคุณ</p>
+  <span class="hero-badge">🌸 ไฟล์ PDF คุณภาพสูง • พิมพ์ได้ • ใช้บน iPad</span>
+</div>
+
+<!-- PRODUCTS -->
+<h2 class="section-title">เลือกสมุดที่ชอบ 🌷</h2>
+
+<div class="products-grid" id="productsGrid"></div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Paperie</strong> · สมุดโน้ตดิจิทัลน่ารัก 🌸<br>
+  ไฟล์ส่งทางอีเมลภายใน 5 นาทีหลังยืนยันการชำระเงิน
+</footer>
+
+<!-- CART MODAL -->
+<div class="overlay" id="cartOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCart()">✕</button>
+    <h2>🛒 ตะกร้าสินค้า</h2>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step" id="s1">① เลือกสินค้า</div>
+      <div class="step" id="s2">② ชำระเงิน</div>
+      <div class="step" id="s3">③ ยืนยัน</div>
+    </div>
+
+    <!-- Step 1: Cart -->
+    <div id="step1">
+      <div id="cartItems"></div>
+      <div class="cart-total">
+        <span>รวมทั้งหมด</span>
+        <span id="cartTotal">฿0</span>
+      </div>
+      <label class="form-label">อีเมลสำหรับรับไฟล์ 📧</label>
+      <input type="email" class="form-input" id="emailInput" placeholder="example@email.com">
+      <button class="btn-primary" id="goPayBtn" onclick="goToPayment()">ดำเนินการชำระเงิน →</button>
+    </div>
+
+    <!-- Step 2: QR Payment -->
+    <div id="step2" style="display:none">
+      <div class="qr-box">
+        <p style="font-size:.85rem;color:#8B6555;margin-bottom:12px;">สแกน QR ด้วยแอปธนาคาร</p>
+        <div class="qr-img"><span class="qr-emoji">📱</span></div>
+        <div class="qr-account">0XX-XXX-XXXX</div>
+        <div class="qr-name">น.ส. ปาปิเอรี่ ช็อป</div>
+        <div class="amount-badge" id="qrAmount">฿0</div>
+        <div class="timer">หมดเวลาใน <span id="countdown">10:00</span></div>
+      </div>
+      <label class="form-label">แนบสลิปโอนเงิน 🧾</label>
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('slipInput').click()">
+        <input type="file" id="slipInput" accept="image/*" onchange="previewSlip(this)">
+        <div class="upload-icon">📎</div>
+        <div class="upload-text"><strong>คลิกเพื่ออัปโหลดสลิป</strong><br>รองรับ JPG, PNG</div>
+        <img id="slipPreview" class="slip-preview" style="display:none">
+      </div>
+      <button class="btn-primary" id="confirmBtn" onclick="confirmPayment()" disabled>✅ ยืนยันการชำระเงิน</button>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div id="step3" style="display:none">
+      <div class="success-box">
+        <span class="success-icon">🎉</span>
+        <h3>ขอบคุณนะคะ! 💖</h3>
+        <p>ส่งไฟล์ไปยัง<br><span class="email-highlight" id="confirmedEmail"></span><br>เรียบร้อยแล้ว!</p>
+        <p style="margin-top:12px;">กรุณาตรวจสอบอีเมล (รวมถึงโฟลเดอร์ Spam)<br>ไฟล์จะถึงภายใน 5 นาทีนะคะ ☺️</p>
+        <div style="margin-top:20px;font-size:2rem">📓📒📔</div>
+      </div>
+      <button class="btn-primary" onclick="resetShop()">🛍️ ช้อปปิ้งต่อ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── PRODUCTS DATA ──────────────────────────────────────────
+const products = [
+  {
+    id: 1, icon: '🌸', color: '#FFE8F4',
+    name: 'Daily Planner — Blossom',
+    desc: 'แพลนเนอร์รายวัน ดีไซน์ดอกไม้นุ่มๆ พร้อมช่อง to-do, habit tracker และ mood log',
+    tags: ['PDF', 'A5', '52 หน้า'],
+    price: 79, isNew: true
+  },
+  {
+    id: 2, icon: '🍋', color: '#FFFBD0',
+    name: 'Study Notes — Lemon Drop',
+    desc: 'โน้ตเรียนสีเหลืองสดใส มีกริดสำหรับจดสมการ และพื้นที่ขอบสำหรับสรุป',
+    tags: ['PDF', 'A4', '40 หน้า'],
+    price: 59, isNew: false
+  },
+  {
+    id: 3, icon: '🌿', color: '#E4F7EE',
+    name: 'Bullet Journal — Sage',
+    desc: 'บูเล็ตเจอร์นัล โทนเขียวมิ้นต์ มี index, monthly, weekly และ daily log',
+    tags: ['PDF', 'A5', '80 หน้า'],
+    price: 119, isNew: true
+  },
+  {
+    id: 4, icon: '💜', color: '#F0EAFF',
+    name: 'Mood Journal — Lavender',
+    desc: 'สมุดบันทึกความรู้สึก ติดตามอารมณ์ทุกวัน พร้อมพื้นที่ระบาย',
+    tags: ['PDF', 'A5', '36 หน้า'],
+    price: 69, isNew: false
+  },
+  {
+    id: 5, icon: '🍑', color: '#FFE8D8',
+    name: 'Recipe Book — Peach Kitchen',
+    desc: 'สมุดจดสูตรอาหารสไตล์วินเทจ พีช มีช่องกรอกวัตถุดิบ ขั้นตอน และรูปภาพ',
+    tags: ['PDF', 'A4', '30 หน้า'],
+    price: 89, isNew: false
+  },
+  {
+    id: 6, icon: '⭐', color: '#FFF8E0',
+    name: 'Goal Planner — Golden Hour',
+    desc: 'แพลนเนอร์เป้าหมายรายปี/รายเดือน วางแผนชีวิตให้เป็นระบบ สวยงาม',
+    tags: ['PDF', 'A4', '48 หน้า'],
+    price: 99, isNew: true
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────
+let cart = [];
+let countdownTimer = null;
+let slipAttached = false;
+
+// ── RENDER PRODUCTS ────────────────────────────────────────
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = products.map(p => `
+    <div class="card">
+      <div class="card-cover" style="background:${p.color}">
+        ${p.isNew ? '<span class="badge-new">✨ ใหม่</span>' : ''}
+        <span>${p.icon}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="card-footer">
+          <div class="price">฿${p.price} <small>/ ไฟล์</small></div>
+          <button class="add-btn" id="btn-${p.id}" onclick="addToCart(${p.id})">+ ใส่ตะกร้า</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── CART LOGIC ─────────────────────────────────────────────
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (cart.find(x => x.id === id)) return;
+  cart.push({ ...p });
+  updateCartCount();
+  const btn = document.getElementById('btn-'+id);
+  btn.textContent = '✓ เพิ่มแล้ว';
+  btn.classList.add('added');
+  btn.disabled = true;
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCartCount();
+  const btn = document.getElementById('btn-'+id);
+  if (btn) { btn.textContent = '+ ใส่ตะกร้า'; btn.classList.remove('added'); btn.disabled = false; }
+  renderCartItems();
+}
+
+function updateCartCount() {
+  document.getElementById('cartCount').textContent = cart.length;
+}
+
+function renderCartItems() {
+  const el = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    el.innerHTML = '<div class="empty-cart"><span>🛒</span>ยังไม่มีสินค้าในตะกร้า</div>';
+    document.getElementById('cartTotal').textContent = '฿0';
+    return;
+  }
+  el.innerHTML = cart.map(p => `
+    <div class="cart-item">
+      <div class="cart-item-icon">${p.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-price">฿${p.price}</div>
+      </div>
+      <button class="remove-item" onclick="removeFromCart(${p.id})">✕</button>
+    </div>
+  `).join('');
+  const total = cart.reduce((s, p) => s + p.price, 0);
+  document.getElementById('cartTotal').textContent = '฿' + total;
+}
+
+// ── MODAL ──────────────────────────────────────────────────
+function openCart() {
+  setStep(1);
+  renderCartItems();
+  document.getElementById('cartOverlay').classList.add('open');
+}
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  if (countdownTimer) clearInterval(countdownTimer);
+}
+
+document.getElementById('cartOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeCart();
+});
+
+// ── STEPS ──────────────────────────────────────────────────
+function setStep(n) {
+  ['step1','step2','step3'].forEach((id, i) => {
+    document.getElementById(id).style.display = i+1 === n ? 'block' : 'none';
+  });
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('s'+i);
+    el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+  }
+}
+
+function goToPayment() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (cart.length === 0) return alert('กรุณาเพิ่มสินค้าลงตะกร้าก่อนนะคะ 🛒');
+  if (!email || !email.includes('@')) return alert('กรุณากรอกอีเมลที่ถูกต้องนะคะ 📧');
+  const total = cart.reduce((s, p) => s + p.price, 0);
+  document.getElementById('qrAmount').textContent = '฿' + total;
+  setStep(2);
+  startCountdown(600);
+  slipAttached = false;
+  document.getElementById('confirmBtn').disabled = true;
+  document.getElementById('slipPreview').style.display = 'none';
+  document.getElementById('uploadArea').querySelector('.upload-text').innerHTML = '<strong>คลิกเพื่ออัปโหลดสลิป</strong><br>รองรับ JPG, PNG';
+}
+
+// ── COUNTDOWN ──────────────────────────────────────────────
+function startCountdown(seconds) {
+  if (countdownTimer) clearInterval(countdownTimer);
+  let s = seconds;
+  const el = document.getElementById('countdown');
+  el.textContent = fmt(s);
+  countdownTimer = setInterval(() => {
+    s--;
+    el.textContent = fmt(s);
+    if (s <= 0) { clearInterval(countdownTimer); el.textContent = 'หมดเวลา'; }
+  }, 1000);
+}
+function fmt(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+
+// ── SLIP ───────────────────────────────────────────────────
+function previewSlip(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('slipPreview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadArea').querySelector('.upload-text').innerHTML = '<strong>✅ อัปโหลดสลิปแล้ว</strong><br>คลิกเพื่อเปลี่ยน';
+    slipAttached = true;
+    document.getElementById('confirmBtn').disabled = false;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ── CONFIRM ────────────────────────────────────────────────
+function confirmPayment() {
+  const email = document.getElementById('emailInput').value.trim();
+  document.getElementById('confirmedEmail').textContent = email;
+  if (countdownTimer) clearInterval(countdownTimer);
+  setStep(3);
+  launchConfetti();
+}
+
+// ── RESET ──────────────────────────────────────────────────
+function resetShop() {
+  cart = [];
+  updateCartCount();
+  document.getElementById('emailInput').value = '';
+  document.getElementById('slipInput').value = '';
+  products.forEach(p => {
+    const btn = document.getElementById('btn-'+p.id);
+    if (btn) { btn.textContent = '+ ใส่ตะกร้า'; btn.classList.remove('added'); btn.disabled = false; }
+  });
+  closeCart();
+}
+
+// ── CONFETTI ───────────────────────────────────────────────
+function launchConfetti() {
+  const colors = ['#F9A8C9','#FFD6B8','#B5E8D5','#CDB8F0','#FFF0A0'];
+  for (let i = 0; i < 40; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'confetti-dot';
+    const size = 6 + Math.random() * 10;
+    dot.style.cssText = `
+      width:${size}px;height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}vw;
+      top:-20px;
+      animation-delay:${Math.random()*.8}s;
+      animation-duration:${1.2+Math.random()*.8}s;
+    `;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 2500);
+  }
+}
+
+// ── INIT ───────────────────────────────────────────────────
+renderProducts();
+</script>
+</body>
+</html>
